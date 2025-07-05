@@ -167,4 +167,4 @@ If you encounter any issues or have questions, please:
 - Built with [Next.js](https://nextjs.org/)
 - Authentication powered by [NextAuth.js](https://next-auth.js.org/)
 - Payments handled by [Stripe](https://stripe.com/)
-- Styling with [Tailwind CSS](https://tailwindcss.com/) 
+- Styling with [Tailwind CSS](https://tailwindcss.com/)
