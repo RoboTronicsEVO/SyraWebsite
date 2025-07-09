@@ -20,7 +20,7 @@ A full-stack web application that replicates the core functionality of Skool.com
 
 ## Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+ (see .nvmrc) 
 - npm or yarn
 - Stripe account
 - Google OAuth credentials
@@ -64,6 +64,17 @@ A full-stack web application that replicates the core functionality of Skool.com
 
    # App Configuration
    NEXT_PUBLIC_APP_URL=http://localhost:3000
+   NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+   # Redis
+   REDIS_URL=redis://localhost:6379
+
+   # SMTP configuration for sending emails
+   MAIL_HOST=smtp.example.com
+   MAIL_PORT=587
+   MAIL_USER=your-smtp-username
+   MAIL_PASS=your-smtp-password
+   MAIL_FROM="SyraRobot <noreply@syra.com>"
    ```
 
 4. **Run the development server**
@@ -104,6 +115,13 @@ A full-stack web application that replicates the core functionality of Skool.com
    - Add endpoint: `http://localhost:3000/api/stripe/webhooks`
    - Select events: `checkout.session.completed`, `customer.subscription.created`
 
+### Redis URL
+The `REDIS_URL` variable configures the Redis instance used for rate limiting.
+
+### SMTP (Email)
+Set `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASS`, and `MAIL_FROM` to
+enable invitation emails for new school admins.
+
 ## Project Structure
 
 ```
@@ -111,8 +129,9 @@ skoolClone/
 ├── app/                    # Next.js 13+ app directory
 │   ├── api/               # API routes
 │   ├── globals.css        # Global styles
-│   ├── layout.html        # Root layout
-│   └── page.html          # Home page
+│   ├── not-found.tsx       # 404 page
+│   ├── layout.tsx        # Root layout
+│   └── page.tsx          # Home page
 ├── components/            # Reusable components
 │   ├── auth/             # Authentication components
 │   ├── shared/           # Shared components
@@ -174,7 +193,9 @@ If you encounter any issues or have questions, please:
 - **Never commit real secrets or API keys to the repository.** Use environment variables and ensure `.env.local` and similar files are gitignored.
 - **Enforce strong password policies** for all users, including demo/test users.
 - **Do not use demo or legacy authentication/database code in production.** Only use the NextAuth and MongoDB/Mongoose setup for live deployments.
-- **Enable rate limiting** for all authentication and registration endpoints to prevent brute-force attacks.
+ - **Enable rate limiting** for all authentication and registration endpoints to
+   prevent brute-force attacks. Configure the Redis backend via the `REDIS_URL`
+   environment variable.
 - **Integrate error monitoring** (e.g., Sentry) and review logs for suspicious activity.
 - **Validate all environment variables at startup** to avoid misconfiguration.
 - **Keep dependencies up to date** and monitor for vulnerabilities.
@@ -229,7 +250,18 @@ All endpoints return JSON. For more details, see the code in the `app/api/` dire
 - Clone the repo and run `npm install`.
 - Copy `.env.example` to `.env.local` and fill in your secrets.
 - Run `npm run dev` to start the development server.
-- Run `npm test` to execute unit tests.
+- Run `npm test` to execute unit tests. Use `npm run test:watch` for continuous testing.
 - Run `npm run lint` to check for code and accessibility issues.
 
 For questions, see the [Support](#support) section or open an issue.
+
+## Demo User
+
+You can create a demo account for local testing using `create-demo-user.js`:
+
+```bash
+DEMO_USER_PASSWORD=YourSecurePassword node create-demo-user.js
+```
+
+The password must be supplied via the `DEMO_USER_PASSWORD` environment variable
+to avoid hard coding credentials.

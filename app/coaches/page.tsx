@@ -17,6 +17,7 @@ import {
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { useSession } from 'next-auth/react';
+import { getSessionUser } from '@/lib/session';
 
 interface Coach {
   id: string;
@@ -118,8 +119,9 @@ export default function CoachesPage() {
   const [maxRate, setMaxRate] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const { data: session } = useSession();
-  const isAdmin = (session?.user as any)?.role === 'admin';
-  const isSchoolAdmin = (session?.user as any)?.role === 'school-admin';
+  const user = getSessionUser(session);
+  const isAdmin = user?.role === 'admin';
+  const isSchoolAdmin = user?.role === 'school-admin';
   if (!isAdmin && !isSchoolAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">

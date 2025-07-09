@@ -4,6 +4,7 @@ import School from '@/models/school.model';
 import { schoolSchema } from '@/lib/validation';
 import slugify from 'slugify';
 import User from '@/models/user.model';
+import { sendInviteEmail } from '@/lib/email';
 
 export async function GET() {
   await connectToDatabase();
@@ -50,8 +51,7 @@ export async function POST(request: NextRequest) {
       inviteToken,
       inviteTokenExpires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24h expiry
     });
-    // TODO: Send invite email to adminUser.email with a link to set their password using inviteToken
+    await sendInviteEmail(adminUser.email, inviteToken);
   }
 
-  return NextResponse.json({ school });
-} 
+  return NextResponse.json({ school });} 

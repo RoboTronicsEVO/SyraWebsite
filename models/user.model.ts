@@ -1,14 +1,17 @@
 import mongoose, { Document, Model, Schema, CallbackWithoutResultAndOptionalError } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import type { Role } from '@/types/roles';
 
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
   image?: string;
-  role: string; // 'user', 'school-admin', 'admin', etc.
+  role: Role;
   verified: boolean;
   isActive: boolean;
+  inviteToken?: string;
+  inviteTokenExpires?: Date;
   comparePassword(candidate: string): Promise<boolean>;
   createdAt: Date;
   updatedAt: Date;
@@ -23,6 +26,8 @@ const UserSchema = new Schema<IUser>(
     role: { type: String, default: 'user' },
     verified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    inviteToken: { type: String },
+    inviteTokenExpires: { type: Date },
   },
   { timestamps: true },
 );
@@ -40,5 +45,4 @@ UserSchema.methods.comparePassword = async function (this: IUser, candidate: str
   return bcrypt.compare(candidate, this.password);
 };
 
-const UserModel = (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>('User', UserSchema);
-export default UserModel;
+const UserModel = (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>('User', UserSchema);export default UserModel;

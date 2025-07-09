@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const isAdmin = session?.user?.email === 'admin@syra.com';
+  const isAdmin = session?.user?.role === 'admin';
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50">

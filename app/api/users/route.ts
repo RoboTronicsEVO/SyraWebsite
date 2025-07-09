@@ -3,11 +3,13 @@ import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/user.model';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
+import { getSessionUser } from '@/lib/session';
 import AuditLog from '@/models/auditlog.model';
 
 export async function GET() {
-  const session = await getServerSession(authOptions as any) as { user?: { id?: string; email?: string; role?: string } };
-  if (!session?.user?.role || session.user.role !== 'admin') {
+  const session = await getServerSession(authOptions);
+  const user = getSessionUser(session);
+  if (!user?.role || user.role !== 'admin') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   await connectToDatabase();
@@ -16,8 +18,9 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-  const session = await getServerSession(authOptions as any) as { user?: { id?: string; email?: string; role?: string } };
-  if (!session?.user?.role || session.user.role !== 'admin') {
+  const session = await getServerSession(authOptions);
+  const sessionUser = getSessionUser(session);
+  if (!sessionUser?.role || sessionUser.role !== 'admin') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const { userId, action, value } = await req.json();
@@ -34,12 +37,11 @@ export async function PATCH(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
   // Log the admin action
   await AuditLog.create({
-    adminId: session?.user?.id,
-    adminEmail: session?.user?.email,
+    adminId: sessionUser?.id,
+    adminEmail: sessionUser?.email,
     action,
     targetUserId: user._id,
     targetUserEmail: user.email,
     details: action === 'changeRole' ? `New role: ${value}` : undefined,
   });
-  return NextResponse.json({ user });
-} 
+  return NextResponse.json({ user });} 
