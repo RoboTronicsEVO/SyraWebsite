@@ -31,49 +31,6 @@ interface School {
   adminEmail: string;
 }
 
-// Mock data - in real app, this would come from API
-const mockSchools: School[] = [
-  {
-    id: '1',
-    name: 'Robotics Academy of Excellence',
-    description: 'Leading robotics education with hands-on learning and competitive teams.',
-    location: 'San Francisco, CA',
-    rating: 4.8,
-    totalStudents: 245,
-    programs: ['FIRST Robotics', 'VEX Robotics', 'Programming'],
-    image: '/api/placeholder/400/200',
-    verified: true,
-    contact: { email: 'info@roboticsacademy.edu', phone: '(555) 123-4567' },
-    adminEmail: 'admin@roboticsacademy.edu',
-  },
-  {
-    id: '2',
-    name: 'TechBot Institute',
-    description: 'Comprehensive robotics curriculum from beginner to advanced levels.',
-    location: 'Austin, TX',
-    rating: 4.6,
-    totalStudents: 189,
-    programs: ['AI & Machine Learning', 'Mechanical Design', 'Electronics'],
-    image: '/api/placeholder/400/200',
-    verified: true,
-    contact: { email: 'contact@techbot.edu', phone: '(555) 987-6543' },
-    adminEmail: 'admin@techbot.edu',
-  },
-  {
-    id: '3',
-    name: 'STEM Robotics Center',
-    description: 'Integrating robotics with science, technology, engineering, and math.',
-    location: 'Boston, MA',
-    rating: 4.7,
-    totalStudents: 156,
-    programs: ['LEGO Mindstorms', 'Arduino Projects', 'Python Programming'],
-    image: '/api/placeholder/400/200',
-    verified: false,
-    contact: { email: 'hello@stemrobotics.org', phone: '(555) 222-3333' },
-    adminEmail: 'admin@stemrobotics.org',
-  },
-];
-
 export default function SchoolsPage() {
   const [schools, setSchools] = useState<School[]>([]);
   const [allSchools, setAllSchools] = useState<School[]>([]);

@@ -39,12 +39,18 @@ export async function POST(request: NextRequest) {
   // Create school admin user if not exists
   let adminUser = await User.findOne({ email: data.adminEmail });
   if (!adminUser) {
+    // Generate a secure random invite token
+    const crypto = await import('crypto');
+    const inviteToken = crypto.randomBytes(32).toString('hex');
     adminUser = await User.create({
       name: data.adminEmail.split('@')[0],
       email: data.adminEmail,
-      password: 'changeme', // In real app, send invite or set password flow
+      password: inviteToken, // Temporary, not usable for login
       role: 'school-admin',
+      inviteToken,
+      inviteTokenExpires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24h expiry
     });
+    // TODO: Send invite email to adminUser.email with a link to set their password using inviteToken
   }
 
   return NextResponse.json({ school });

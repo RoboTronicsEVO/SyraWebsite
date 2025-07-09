@@ -40,75 +40,11 @@ interface Team {
   status: 'active' | 'recruiting' | 'inactive';
 }
 
-const mockTeams: Team[] = [
-  {
-    id: '1',
-    name: 'TechBot Warriors',
-    description: 'Competitive robotics team focused on FIRST Robotics competitions and innovation.',
-    school: 'Robotics Academy of Excellence',
-    location: 'San Francisco, CA',
-    members: 8,
-    max_members: 12,
-    skill_level: 'advanced',
-    founded: '2022-09-01',
-    achievements: ['Regional Champions 2023', 'Innovation Award 2024', 'Dean\'s List Award'],
-    categories: ['FIRST Robotics', 'Programming', 'Mechanical Design'],
-    looking_for_members: true,
-    captain: {
-      name: 'Sarah Chen',
-      avatar: '/api/placeholder/40/40'
-    },
-    status: 'recruiting'
-  },
-  {
-    id: '2',
-    name: 'Circuit Breakers',
-    description: 'Dedicated team of middle school students learning the fundamentals of robotics.',
-    school: 'Lincoln Middle School',
-    location: 'Austin, TX',
-    members: 6,
-    max_members: 8,
-    skill_level: 'intermediate',
-    founded: '2023-01-15',
-    achievements: ['Best Teamwork Award', 'Rookie Inspiration Award'],
-    categories: ['VEX Robotics', 'Programming', 'Electronics'],
-    looking_for_members: true,
-    captain: {
-      name: 'Alex Johnson',
-      avatar: '/api/placeholder/40/40'
-    },
-    status: 'recruiting'
-  },
-  {
-    id: '3',
-    name: 'Gear Heads',
-    description: 'Experienced team with focus on mechanical engineering and design innovation.',
-    school: 'Tech Valley High',
-    location: 'Boston, MA',
-    members: 10,
-    max_members: 10,
-    skill_level: 'advanced',
-    founded: '2021-08-20',
-    achievements: ['State Champions 2023', 'Excellence Award', 'Design Award'],
-    categories: ['FRC', 'CAD Design', 'Manufacturing'],
-    looking_for_members: false,
-    captain: {
-      name: 'Marcus Rodriguez',
-      avatar: '/api/placeholder/40/40'
-    },
-    status: 'active'
-  }
-];
-
 export default function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [allTeams, setAllTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [createLoading, setCreateLoading] = useState(false);
-  const [createError, setCreateError] = useState<string | null>(null);
-  const [editLoading, setEditLoading] = useState(false);
-  const [editError, setEditError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSkillLevel, setSelectedSkillLevel] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -125,6 +61,8 @@ export default function TeamsPage() {
   const [registerStatus, setRegisterStatus] = useState<'idle' | 'success' | 'error' | 'loading'>('idle');
   const [registerError, setRegisterError] = useState<string | null>(null);
   const [schoolId, setSchoolId] = useState<string>('');
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
 
   // Fetch competitions when modal opens
   useEffect(() => {
@@ -219,33 +157,7 @@ export default function TeamsPage() {
     );
   };
 
-  const handleCreateTeam = async (form: any) => {
-    setCreateLoading(true);
-    setCreateError(null);
-    try {
-      const res = await fetch('/api/teams', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setCreateError(data.error || 'Failed to create team.');
-        setCreateLoading(false);
-        return;
-      }
-      setTeams([data.team, ...teams]);
-      setShowCreateForm(false);
-    } catch (err) {
-      setCreateError('Network error.');
-    } finally {
-      setCreateLoading(false);
-    }
-  };
-
   const handleEditTeam = async (teamId: string, name: string, competitionId?: string) => {
-    setEditLoading(true);
-    setEditError(null);
     try {
       const res = await fetch('/api/teams', {
         method: 'PATCH',
@@ -254,15 +166,30 @@ export default function TeamsPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setEditError(data.error || 'Failed to update team.');
-        setEditLoading(false);
         return;
       }
       setTeams(teams.map(t => t.id === teamId ? data.team : t));
     } catch (err) {
-      setEditError('Network error.');
-    } finally {
-      setEditLoading(false);
+      // No-op
+    }
+  };
+
+  // Place handleCreateTeam here so it is in scope for the modal
+  const handleCreateTeam = async (form: any) => {
+    try {
+      const res = await fetch('/api/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return;
+      }
+      setTeams([data.team, ...teams]);
+      setShowCreateForm(false);
+    } catch (err) {
+      // No-op
     }
   };
 
@@ -562,6 +489,9 @@ export default function TeamsPage() {
                     Register for Competition
                   </Button>
                 )}
+                <Button className="flex-1" size="sm" variant="outline" onClick={() => { setEditingTeam(team); setShowEditForm(true); }}>
+                  Edit
+                </Button>
               </div>
             </div>
           ))
@@ -573,48 +503,49 @@ export default function TeamsPage() {
 
       {/* Create Team Modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-              Create New Team
-            </h3>
-            <p className="text-neutral-600 mb-4">
-              Start building your robotics team and invite members to join your journey.
-            </p>
-            <div className="space-y-4 mb-6">
-              <Input placeholder="Team Name" />
-              <textarea 
-                className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm"
-                placeholder="Team Description"
-                rows={3}
-              />
-              <select className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm">
-                <option value="">Select Skill Level</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-            </div>
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setShowCreateForm(false)}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button 
-                className="flex-1"
-                onClick={() => {
-                  // Handle team creation logic here
-                  setShowCreateForm(false);
-                }}
-              >
-                Create Team
-              </Button>
-            </div>
+        <Dialog open={showCreateForm} onClose={() => setShowCreateForm(false)} className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+            <h2 className="text-xl font-bold mb-4">Create New Team</h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const form = Object.fromEntries(new FormData(e.currentTarget));
+                await handleCreateTeam(form);
+                setShowCreateForm(false);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium mb-1">Team Name</label>
+                <Input name="name" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <Input name="description" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">School</label>
+                <Input name="school" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Location</label>
+                <Input name="location" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Skill Level</label>
+                <select name="skill_level" className="w-full border rounded px-2 py-1" required>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+              </div>
+              <div className="flex gap-2 mt-6">
+                <Button type="submit" variant="primary">Create</Button>
+                <Button type="button" variant="outline" onClick={() => setShowCreateForm(false)}>Cancel</Button>
+              </div>
+            </form>
           </div>
-        </div>
+        </Dialog>
       )}
       {/* Register Modal */}
       {showRegisterModal && registeringTeam && (
@@ -676,6 +607,52 @@ export default function TeamsPage() {
                 {registerStatus === 'loading' ? 'Registering...' : 'Register'}
               </Button>
             </div>
+          </div>
+        </Dialog>
+      )}
+      {/* Edit Team Modal */}
+      {showEditForm && editingTeam && (
+        <Dialog open={showEditForm} onClose={() => setShowEditForm(false)} className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+            <h2 className="text-xl font-bold mb-4">Edit Team</h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const form = Object.fromEntries(new FormData(e.currentTarget));
+                await handleEditTeam(editingTeam.id, form.name as string, form.competitionId as string);
+                setShowEditForm(false);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium mb-1">Team Name</label>
+                <Input name="name" defaultValue={editingTeam.name} required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <Input name="description" defaultValue={editingTeam.description} required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">School</label>
+                <Input name="school" defaultValue={editingTeam.school} required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Location</label>
+                <Input name="location" defaultValue={editingTeam.location} required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Skill Level</label>
+                <select name="skill_level" className="w-full border rounded px-2 py-1" defaultValue={editingTeam.skill_level} required>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+              </div>
+              <div className="flex gap-2 mt-6">
+                <Button type="submit" variant="primary">Save</Button>
+                <Button type="button" variant="outline" onClick={() => setShowEditForm(false)}>Cancel</Button>
+              </div>
+            </form>
           </div>
         </Dialog>
       )}

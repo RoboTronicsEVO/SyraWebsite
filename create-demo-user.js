@@ -12,8 +12,12 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 async function createDemoUser() {
-  await mongoose.connect(uri);
-  const hashed = await bcrypt.hash('password123', 10);
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Demo user creation is disabled in production for security reasons.');
+  }
+  // Strong password policy: at least 12 chars, upper/lowercase, number, symbol
+  const demoPassword = 'DemoUser!2024#';
+  const hashed = await bcrypt.hash(demoPassword, 10);
   const existing = await User.findOne({ email: 'demo@syrarobot.com' });
   if (existing) {
     console.log('Demo user already exists.');
@@ -24,7 +28,7 @@ async function createDemoUser() {
       password: hashed,
       image: '',
     });
-    console.log('Demo user created!');
+    console.log('Demo user created! Password:', demoPassword);
   }
   await mongoose.disconnect();
 }

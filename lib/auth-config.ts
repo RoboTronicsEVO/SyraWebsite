@@ -4,6 +4,8 @@ import GitHubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { connectToDatabase } from '@/lib/mongodb';
 import User, { IUser } from '@/models/user.model';
+import { validateEnvVars } from './utils';
+validateEnvVars();
 
 export const authOptions: NextAuthOptions = {
   providers: [

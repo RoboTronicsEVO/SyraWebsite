@@ -141,7 +141,7 @@ const mockTeams = [
   }
 ];
 
-export default function SchoolDetailPage({ params }: { params: { id: string } }) {
+export default function SchoolDetailPage() {
   const [school] = useState<SchoolDetail>(mockSchoolDetail);
   const [showEnrollmentForm, setShowEnrollmentForm] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -299,12 +299,12 @@ export default function SchoolDetailPage({ params }: { params: { id: string } })
           <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
             <h2 className="text-xl font-semibold text-neutral-900 mb-4">Gallery</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {school.gallery.map((image, index) => (
+              {school.gallery.map((_, index) => (
                 <div
                   key={index}
                   className="aspect-video bg-neutral-200 rounded-lg overflow-hidden"
                 >
-                  {/* Image placeholder */}
+                  {/* Gallery image placeholder */}
                 </div>
               ))}
             </div>

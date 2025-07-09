@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 
 export interface AppError extends Error {
   statusCode?: number;
@@ -153,6 +154,9 @@ export class ErrorLogger {
 
 // API error handler for Next.js routes
 export function handleApiError(error: unknown): NextResponse {
+  if (process.env.SENTRY_DSN) {
+    Sentry.captureException(error);
+  }
   let appError: AppError;
 
   if (error instanceof CustomError) {

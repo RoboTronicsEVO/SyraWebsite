@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { showToast } from "@/components/ui/Toast";
-import Link from "next/link";
 
 export default function AdminUsersPage() {
   const { data: session } = useSession();
@@ -50,7 +49,7 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, []);
 
-  const user = (session?.user ?? {}) as { role?: string };
+  const user = (session?.user ?? {}) as { role?: string; email?: string };
   if (!user.role || user.role !== "admin") {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -87,7 +86,7 @@ export default function AdminUsersPage() {
                   <td className="p-2">{user.name}</td>
                   <td className="p-2">{user.email}</td>
                   <td className="p-2">{user.role}
-                    {user.email !== session.user?.email && (
+                    {user.email !== (session?.user?.email ?? '') && (
                       <>
                         <select className="ml-2 border rounded px-1 py-0.5 text-xs" disabled>
                           <option value="student">Student</option>
@@ -108,7 +107,7 @@ export default function AdminUsersPage() {
                     )}
                   </td>
                   <td className="p-2 space-x-2">
-                    {user.email !== session.user?.email && (
+                    {user.email !== (session?.user?.email ?? '') && (
                       <>
                         <button
                           className="text-blue-600 hover:underline cursor-pointer disabled:cursor-not-allowed"

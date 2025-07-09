@@ -168,3 +168,68 @@ If you encounter any issues or have questions, please:
 - Authentication powered by [NextAuth.js](https://next-auth.js.org/)
 - Payments handled by [Stripe](https://stripe.com/)
 - Styling with [Tailwind CSS](https://tailwindcss.com/)
+
+## Security Best Practices
+
+- **Never commit real secrets or API keys to the repository.** Use environment variables and ensure `.env.local` and similar files are gitignored.
+- **Enforce strong password policies** for all users, including demo/test users.
+- **Do not use demo or legacy authentication/database code in production.** Only use the NextAuth and MongoDB/Mongoose setup for live deployments.
+- **Enable rate limiting** for all authentication and registration endpoints to prevent brute-force attacks.
+- **Integrate error monitoring** (e.g., Sentry) and review logs for suspicious activity.
+- **Validate all environment variables at startup** to avoid misconfiguration.
+- **Keep dependencies up to date** and monitor for vulnerabilities.
+- **Use HTTPS** in production to protect user data in transit.
+- **Restrict CORS** to trusted domains only.
+- **Regularly review user roles and permissions.**
+
+## Deployment Checklist
+
+- [ ] All environment variables are set and valid (`npm run build` will fail if not).
+- [ ] No demo/test users or legacy code is enabled in production.
+- [ ] Sentry (or another error monitoring service) is configured for production.
+- [ ] Rate limiting is enabled and uses a distributed backend (e.g., Redis).
+- [ ] HTTPS is enforced and certificates are valid.
+- [ ] Database access is restricted to trusted IPs/services.
+- [ ] All third-party API keys are set to production values.
+- [ ] CORS is restricted to your production domain(s).
+- [ ] All dependencies are up to date and free of known vulnerabilities.
+- [ ] A backup and recovery plan is in place for the database.
+- [ ] Security best practices (above) are reviewed and followed.
+
+## Error Monitoring (Sentry)
+
+To enable error monitoring in production, set the `SENTRY_DSN` environment variable in your deployment environment. You can get your DSN from your Sentry project settings.
+
+- Add `SENTRY_DSN=your-sentry-dsn-here` to your `.env.local` or production environment.
+- All server and client errors will be reported to Sentry automatically.
+
+## Uptime Monitoring
+
+To ensure your site is always available, set up uptime monitoring with a service like [UptimeRobot](https://uptimerobot.com/) or [Better Uptime](https://betteruptime.com/):
+
+- Sign up for a free account.
+- Add your production site URL (e.g., https://yourdomain.com).
+- Set up email or Slack alerts for downtime.
+- Optionally, add a public status page for your users.
+
+## API Documentation
+
+This project exposes several REST API endpoints under `/api/` (see the `app/api/` directory). Example endpoints:
+
+- `POST /api/register` — Register a new user or school
+- `POST /api/auth/[...nextauth]` — Authentication (NextAuth.js)
+- `GET /api/competitions` — List competitions
+- `GET /api/teams` — List teams
+- `GET /api/schools` — List schools
+
+All endpoints return JSON. For more details, see the code in the `app/api/` directory or contact the development team.
+
+## Developer Onboarding
+
+- Clone the repo and run `npm install`.
+- Copy `.env.example` to `.env.local` and fill in your secrets.
+- Run `npm run dev` to start the development server.
+- Run `npm test` to execute unit tests.
+- Run `npm run lint` to check for code and accessibility issues.
+
+For questions, see the [Support](#support) section or open an issue.

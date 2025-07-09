@@ -11,7 +11,6 @@ import {
   Clock,
   Filter,
   Plus,
-  Star,
   Target
 } from 'lucide-react';
 import Input from '@/components/ui/Input';
@@ -38,57 +37,6 @@ interface Competition {
   status: 'upcoming' | 'registration_open' | 'registration_closed' | 'in_progress' | 'completed';
 }
 
-const mockCompetitions: Competition[] = [
-  {
-    id: '1',
-    title: 'Regional Robotics Championship 2024',
-    description: 'Annual championship featuring the best high school robotics teams in the region.',
-    type: 'tournament',
-    skill_level: 'advanced',
-    location: 'San Francisco Convention Center',
-    date: '2024-04-15',
-    registration_deadline: '2024-03-15',
-    max_teams: 64,
-    registered_teams: 45,
-    prize_pool: '$25,000',
-    organizer: 'Bay Area Robotics Alliance',
-    categories: ['Autonomous Navigation', 'Object Manipulation', 'Team Presentation'],
-    status: 'registration_open'
-  },
-  {
-    id: '2',
-    title: 'FIRST Tech Challenge - Spring Tournament',
-    description: 'Official FIRST Tech Challenge tournament for middle and high school teams.',
-    type: 'tournament',
-    skill_level: 'all',
-    location: 'Austin Tech Center',
-    date: '2024-03-22',
-    registration_deadline: '2024-02-22',
-    max_teams: 48,
-    registered_teams: 32,
-    prize_pool: '$15,000',
-    organizer: 'FIRST Texas',
-    categories: ['Robot Game', 'Innovation Project', 'Robot Design'],
-    status: 'registration_open'
-  },
-  {
-    id: '3',
-    title: 'Beginner Bot Battle',
-    description: 'Perfect first competition for new robotics teams and students.',
-    type: 'challenge',
-    skill_level: 'beginner',
-    location: 'Local Community Center',
-    date: '2024-02-28',
-    registration_deadline: '2024-02-20',
-    max_teams: 24,
-    registered_teams: 18,
-    prize_pool: '$2,500',
-    organizer: 'Robotics Education Foundation',
-    categories: ['Line Following', 'Obstacle Course', 'Creative Design'],
-    status: 'registration_open'
-  }
-];
-
 export default function CompetitionsPage() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [allCompetitions, setAllCompetitions] = useState<Competition[]>([]);
@@ -105,7 +53,7 @@ export default function CompetitionsPage() {
   const [teams, setTeams] = useState<any[]>([]);
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [schoolId, setSchoolId] = useState<string>('');
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   // Type guard for user
   const user = (session?.user ?? {}) as { id?: string; role?: string; email?: string };
   const isSchool = user?.role === 'school-admin' || user?.email?.endsWith('@school.com');

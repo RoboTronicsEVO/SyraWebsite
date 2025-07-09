@@ -82,12 +82,12 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <nav className="bg-white border-b border-neutral-200 sticky top-0 z-50" role="navigation" aria-label="Main navigation">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo and Brand */}
           <div className="flex items-center">
-            <Link href="/dashboard" className="flex items-center space-x-3">
+            <Link href="/dashboard" className="flex items-center space-x-3" aria-label="Go to dashboard">
               <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SR</span>
               </div>
@@ -117,6 +117,7 @@ export default function Navigation() {
                       : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
                   )}
                   title={item.description}
+                  aria-label={item.name}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.name}</span>
@@ -124,7 +125,7 @@ export default function Navigation() {
               );
             })}
             {!session && (
-              <Link href="/register" className="px-3 py-2 rounded-lg text-sm font-medium text-primary-700 hover:bg-primary-50 transition-colors duration-200">
+              <Link href="/register" className="px-3 py-2 rounded-lg text-sm font-medium text-primary-700 hover:bg-primary-50 transition-colors duration-200" aria-label="Register">
                 Register
               </Link>
             )}
@@ -133,12 +134,12 @@ export default function Navigation() {
           {/* Right side actions */}
           <div className="flex items-center space-x-3">
             {/* Search Button */}
-            <button className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors">
+            <button className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors" aria-label="Open search">
               <Search className="w-5 h-5" />
             </button>
 
             {/* Notifications */}
-            <button className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors relative">
+            <button className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors relative" aria-label="View notifications">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-accent-500 rounded-full"></span>
             </button>
@@ -147,6 +148,7 @@ export default function Navigation() {
             <Link
               href="/profile"
               className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors"
+              aria-label="Go to profile"
             >
               <User className="w-5 h-5" />
             </Link>
@@ -155,6 +157,7 @@ export default function Navigation() {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors"
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               {isMobileMenuOpen ? (
                 <X className="w-5 h-5" />

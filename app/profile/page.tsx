@@ -5,13 +5,15 @@ import ProfileButton from '@/components/auth/ProfileButton';
 import Link from 'next/link';
 
 async function getUserSchool(email: string) {
-  const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/schools', { cache: 'no-store' });
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const res = await fetch(baseUrl + '/api/schools', { cache: 'no-store' });
   const data = await res.json();
   return (data.schools || []).find((s: any) => s.adminEmail === email);
 }
 
 async function getUserTeams(userId: string) {
-  const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/teams', { cache: 'no-store' });
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const res = await fetch(baseUrl + '/api/teams', { cache: 'no-store' });
   const data = await res.json();
   return (data.teams || []).filter((t: any) => t.captainId === userId || (t.members && t.members.some((m: any) => m.userId === userId)));
 }

@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { loginSchema, type LoginForm as LoginFormData } from '@/lib/validation';
-import { authToasts, formToasts } from '@/components/ui/Toast';
+import { authToasts, formToasts, rateLimitToasts } from '@/components/ui/Toast';
 import { ErrorLogger } from '@/lib/error-handler';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -59,6 +59,8 @@ export default function LoginForm({ className, redirectTo = '/dashboard' }: Logi
         } else if (result.error === 'not_verified') {
           setError('email', { message: 'Account not verified. Please check your email.' });
           authToasts.loginError('Account not verified. Please check your email.');
+        } else if (result.error.toLowerCase().includes('too many login attempts')) {
+          rateLimitToasts.loginRateLimited();
         } else {
           authToasts.loginError('An error occurred during login');
         }

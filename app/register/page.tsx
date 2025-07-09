@@ -25,7 +25,6 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     mode: "onBlur",

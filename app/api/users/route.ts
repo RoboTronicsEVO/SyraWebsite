@@ -5,8 +5,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import AuditLog from '@/models/auditlog.model';
 
-export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions as any);
+export async function GET() {
+  const session = await getServerSession(authOptions as any) as { user?: { id?: string; email?: string; role?: string } };
   if (!session?.user?.role || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const session = await getServerSession(authOptions as any);
+  const session = await getServerSession(authOptions as any) as { user?: { id?: string; email?: string; role?: string } };
   if (!session?.user?.role || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }

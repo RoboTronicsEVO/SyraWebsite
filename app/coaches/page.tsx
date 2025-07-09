@@ -12,8 +12,7 @@ import {
   Award,
   MessageCircle,
   Plus,
-  Filter,
-  Target
+  Filter
 } from 'lucide-react';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';

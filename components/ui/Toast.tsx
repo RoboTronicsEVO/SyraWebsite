@@ -400,6 +400,22 @@ export const competitionToasts = {
   },
 };
 
+// Rate limit specific toast helpers
+export const rateLimitToasts = {
+  loginRateLimited: () => {
+    showToast.warning(
+      'Too Many Login Attempts',
+      'You have reached the maximum number of login attempts. Please wait a few minutes before trying again.'
+    );
+  },
+  registerRateLimited: () => {
+    showToast.warning(
+      'Too Many Registration Attempts',
+      'You have reached the maximum number of registration attempts. Please wait a few minutes before trying again.'
+    );
+  },
+};
+
 // Main Toaster component with custom configuration
 export function ToastProvider() {
   return (

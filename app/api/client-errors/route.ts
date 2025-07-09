@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { handleApiError, ErrorLogger } from '@/lib/error-handler';
+import * as Sentry from '@sentry/node';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,6 +30,9 @@ export async function POST(request: NextRequest) {
       },
       isOperational: true,
     });
+    if (process.env.SENTRY_DSN) {
+      Sentry.captureException(new Error(errorData.message));
+    }
 
     // In a production environment, you might want to:
     // 1. Store errors in a database

@@ -14,14 +14,16 @@ const ProfileButton: React.FC = () => {
       {session.user.image && (
         <img
           src={session.user.image}
-          alt="avatar"
+          alt={session.user.name ? `${session.user.name}'s avatar` : 'User avatar'}
           className="h-8 w-8 rounded-full"
+          aria-label="Profile avatar"
         />
       )}
       <span className="text-sm font-medium">{session.user.name}</span>
       <button
         onClick={() => signOut({ callbackUrl: '/' })}
         className="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+        aria-label="Sign out"
       >
         Sign Out
       </button>

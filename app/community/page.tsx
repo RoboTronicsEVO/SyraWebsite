@@ -9,14 +9,13 @@ import {
   MessageCircle,
   Calendar,
   User,
-  Tag,
   Plus,
   Filter,
   Clock
 } from 'lucide-react';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 interface Post {
   id: string;
@@ -37,85 +36,6 @@ interface Post {
   solved: boolean;
   last_activity: string;
 }
-
-const mockPosts: Post[] = [
-  {
-    id: '1',
-    title: 'Best programming language for robotics beginners?',
-    content: 'I\'m just starting with robotics and wondering what programming language I should focus on first. I\'ve heard Python and C++ mentioned a lot...',
-    author: {
-      name: 'Alex Chen',
-      avatar: '/api/placeholder/40/40',
-      role: 'student'
-    },
-    created_at: '2024-01-15T10:30:00Z',
-    category: 'Programming',
-    tags: ['beginner', 'programming', 'python', 'c++'],
-    likes: 24,
-    replies: 12,
-    views: 156,
-    featured: false,
-    solved: true,
-    last_activity: '2024-01-16T14:20:00Z'
-  },
-  {
-    id: '2',
-    title: 'FIRST Robotics Competition 2024 - Team Strategies',
-    content: 'With the new game announcement, what strategies is everyone considering? Our team is thinking about focusing on autonomous programming this year...',
-    author: {
-      name: 'Sarah Rodriguez',
-      avatar: '/api/placeholder/40/40',
-      role: 'mentor'
-    },
-    created_at: '2024-01-14T16:45:00Z',
-    category: 'Competition',
-    tags: ['FRC', 'strategy', '2024', 'autonomous'],
-    likes: 38,
-    replies: 23,
-    views: 287,
-    featured: true,
-    solved: false,
-    last_activity: '2024-01-16T09:15:00Z'
-  },
-  {
-    id: '3',
-    title: 'Troubleshooting servo motor issues',
-    content: 'Our team is having problems with servo motors not responding correctly. We\'ve checked the wiring and power supply, but still having issues...',
-    author: {
-      name: 'Mike Johnson',
-      avatar: '/api/placeholder/40/40',
-      role: 'student'
-    },
-    created_at: '2024-01-13T08:20:00Z',
-    category: 'Hardware',
-    tags: ['servo', 'troubleshooting', 'motors', 'help'],
-    likes: 15,
-    replies: 8,
-    views: 94,
-    featured: false,
-    solved: false,
-    last_activity: '2024-01-15T11:30:00Z'
-  },
-  {
-    id: '4',
-    title: 'Robotics scholarship opportunities for 2024',
-    content: 'Compiled a list of scholarships available for students pursuing robotics and STEM education. Hope this helps fellow students!',
-    author: {
-      name: 'Dr. Emily Watson',
-      avatar: '/api/placeholder/40/40',
-      role: 'teacher'
-    },
-    created_at: '2024-01-12T14:10:00Z',
-    category: 'Education',
-    tags: ['scholarships', 'education', 'funding', 'students'],
-    likes: 67,
-    replies: 19,
-    views: 432,
-    featured: true,
-    solved: false,
-    last_activity: '2024-01-16T13:45:00Z'
-  }
-];
 
 const categories = [
   'All Categories',

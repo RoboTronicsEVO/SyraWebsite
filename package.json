@@ -7,15 +7,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
     "@hookform/resolvers": "^5.1.1",
+    "@sentry/nextjs": "^7.92.0",
+    "@sentry/node": "^7.92.0",
     "@stripe/stripe-js": "^2.0.0",
     "autoprefixer": "^10.4.0",
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
+    "ioredis": "^5.6.1",
     "lucide-react": "^0.525.0",
     "micro": "^9.3.4",
     "mongoose": "^8.0.0",
@@ -35,12 +39,15 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/jest": "^30.0.0",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20.19.4",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.0.0",
+    "jest": "^30.0.4",
+    "ts-jest": "^29.4.0",
     "typescript": "^5.0.0"
   },
   "overrides": {},
