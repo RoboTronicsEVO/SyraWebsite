@@ -13,10 +13,11 @@ import {
   Search,
   Bell,
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { getSessionUser } from '@/lib/session';
 
 interface NavigationItem {
@@ -155,6 +156,16 @@ export default function Navigation() {
               <User className="w-5 h-5" />
             </Link>
 
+            {session && (
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors"
+                aria-label="Sign out"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            )}
+
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -206,10 +217,19 @@ export default function Navigation() {
                   Register
                 </Link>
               )}
+              {session && (
+                <button
+                  onClick={() => { setIsMobileMenuOpen(false); signOut({ callbackUrl: '/' }); }}
+                  className="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 w-full"
+                  aria-label="Sign out"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </button>
+              )}
             </div>
           </div>
         )}
       </div>
     </nav>
-  );
-}
+  );}

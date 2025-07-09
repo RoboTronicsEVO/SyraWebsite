@@ -1,9 +1,11 @@
 'use client';
 import { useSession } from 'next-auth/react';
+import { getSessionUser } from '@/lib/session';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const isAdmin = session?.user?.role === 'admin';
+  const user = getSessionUser(session);
+  const isAdmin = user?.role === 'admin';
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50">
