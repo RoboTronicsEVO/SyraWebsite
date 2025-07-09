@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth-config';
 import ProfileButton from '@/components/auth/ProfileButton';
 import Link from 'next/link';
+import { getSessionUser } from '@/lib/session';
 
 async function getUserSchool(email: string) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -19,12 +20,16 @@ async function getUserTeams(userId: string) {
 }
 
 export default async function ProfilePage() {
-  const session = await getServerSession(authOptions as any) as any;
+  const session = await getServerSession(authOptions);
+  const user = getSessionUser(session);
   if (!session) {
     redirect('/signin');
     return;
   }
-  const user = session.user;
+  if (!user) {
+    redirect('/signin');
+    return;
+  }
   if (user.role !== 'admin' && user.role !== 'school-admin') {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">

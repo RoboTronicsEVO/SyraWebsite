@@ -1,13 +1,14 @@
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth-config";
-import { connectToDatabase } from "@/lib/mongodb";
-import AuditLog from "@/models/auditlog.model";
+import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
+import { authOptions } from '@/lib/auth-config';
+import { connectToDatabase } from '@/lib/mongodb';
+import AuditLog from '@/models/auditlog.model';
+import { getSessionUser } from '@/lib/session';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  const user = session?.user as any;
-  if (!user || user.role !== "admin") {
+  const user = getSessionUser(session);
+  if (!user || user.role !== 'admin') {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   await connectToDatabase();
@@ -21,5 +22,4 @@ export async function GET() {
     .sort({ createdAt: -1 })
     .limit(100)
     .lean();
-  return NextResponse.json({ logs });
-} 
+  return NextResponse.json({ logs });} 

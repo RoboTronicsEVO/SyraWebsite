@@ -19,6 +19,7 @@ import Button from '@/components/ui/Button';
 import { Dialog } from '@headlessui/react';
 import { showToast } from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
+import { getSessionUser } from '@/lib/session';
 
 interface Team {
   id: string;
@@ -51,7 +52,7 @@ export default function TeamsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const { data: session } = useSession();
-  const user = (session?.user ?? {}) as { id?: string; role?: string; email?: string };
+  const user = getSessionUser(session);
   const isSchoolAdmin = user?.role === 'school-admin';
   // Modal state for registration
   const [showRegisterModal, setShowRegisterModal] = useState(false);

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
+import { getSessionUser } from '@/lib/session';
 
 interface NavigationItem {
   name: string;
@@ -69,8 +70,9 @@ export default function Navigation() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
-  const isAdmin = (session?.user as any)?.role === 'admin';
-  const isSchoolAdmin = (session?.user as any)?.role === 'school-admin';
+  const user = getSessionUser(session);
+  const isAdmin = user?.role === 'admin';
+  const isSchoolAdmin = user?.role === 'school-admin';
   const showCommunity = isAdmin || isSchoolAdmin;
   const showCoaches = isAdmin || isSchoolAdmin;
 

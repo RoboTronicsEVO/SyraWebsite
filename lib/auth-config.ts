@@ -44,12 +44,13 @@ export const authOptions: NextAuthOptions = {
           throw new Error('not_verified');
         }
 
-        return { 
-          id: (user as any)._id.toString(), 
-          name: user.name, 
-          email: user.email, 
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
           image: user.image || null,
           role: user.role,
+          verified: user.verified,
         };
       },
     }),
@@ -64,9 +65,9 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       // If user is logging in, add id and role
       if (user) {
-        token.id = user.id;
-        token.role = (user as any).role;
-        token.verified = (user as any).verified;
+        token.id = (user as any).id ?? (user as IUser)._id.toString();
+        token.role = (user as IUser).role;
+        token.verified = (user as IUser).verified;
       } else if (token?.email && !token.role) {
         // If token exists but no role, fetch from DB
         const dbUser = await User.findOne({ email: token.email });
@@ -78,10 +79,9 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).id = token.id;
-        (session.user as any).role = token.role;
-        (session.user as any).verified = token.verified;
+        (session.user as any).role = token.role as string;
+        (session.user as any).verified = token.verified as boolean;
       }
       return session;
     },
-  },
-};
+  },};

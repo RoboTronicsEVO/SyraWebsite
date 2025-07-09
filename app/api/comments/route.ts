@@ -1,21 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
+import { getSessionUser } from '@/lib/session';
 import { connectToDatabase } from '@/lib/mongodb';
 import Comment from '@/models/comment.model';
 import Post from '@/models/post.model';
 import mongoose from 'mongoose';
+import { getRedisClient } from '@/lib/redis';
+
+const RATE_LIMIT = 10;
+const WINDOW_SEC = 60;
+
+async function isRateLimited(ip: string) {
+  const redis = getRedisClient();
+  const key = `comments:rate:${ip}`;
+  const count = await redis.incr(key);
+  if (count === 1) {
+    await redis.expire(key, WINDOW_SEC);
+  }
+  return count > RATE_LIMIT;
+}
 
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions as any) as any;
-  if (!session) {
+  const ip = request.headers.get("x-forwarded-for") || request.ip || "unknown";
+  if (await isRateLimited(ip)) {
+    return NextResponse.json({ message: "Too many comments. Please try again later." }, { status: 429 });
+  }
+  const session = await getServerSession(authOptions);
+  const user = getSessionUser(session);
+  if (!user) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
   await connectToDatabase();
 
   const { content, postId, parentId } = await request.json();
-  const authorId = session.user?.id;
+  const authorId = user.id;
 
   if (!content || !postId) {
     return NextResponse.json({ message: 'Content and postId are required.' }, { status: 400 });
@@ -37,5 +57,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   } finally {
     dbSession.endSession();
-  }
-}
+  }}
